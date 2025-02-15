@@ -3,24 +3,16 @@ package br.com.controleestoqueapi.users.infrastructure.persistence;
 import br.com.controleestoqueapi.users.domain.model.User;
 import br.com.controleestoqueapi.users.domain.model.UserId;
 import br.com.controleestoqueapi.users.domain.repository.UserRepository;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-// Interface JPA (Spring Data JPA) - *Não* é no domínio!
-interface UserJpaRepository extends JpaRepository<UserEntity, Long> {
-    Optional<UserEntity> findByEmail(String email);
-    boolean existsByEmail(String email);
-}
-
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
     private final UserJpaRepository jpaRepository;
-
 
     public UserRepositoryImpl(UserJpaRepository jpaRepository) {
         this.jpaRepository = jpaRepository;
@@ -31,7 +23,6 @@ public class UserRepositoryImpl implements UserRepository {
         UserEntity entity = toEntity(user);
         UserEntity saveEntity = jpaRepository.save(entity);
         return toDomain(saveEntity);
-
     }
 
     @Override
@@ -54,7 +45,6 @@ public class UserRepositoryImpl implements UserRepository {
         return jpaRepository.findByEmail(email).map(this::toDomain);
     }
 
-
     @Override
     public boolean existsByEmail(String email) {
         return jpaRepository.existsByEmail(email);
@@ -73,7 +63,7 @@ public class UserRepositoryImpl implements UserRepository {
         entity.setPassword(user.getPassword());
         entity.setPhoneNumber(user.getPhoneNumber());
         entity.setAddress(user.getAddress());
-        entity.setRoles(user.getRoles()); // Copia os papéis
+        entity.setRoles(user.getRoles());
 
         return entity;
     }

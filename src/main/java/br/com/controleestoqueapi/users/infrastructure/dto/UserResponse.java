@@ -1,6 +1,6 @@
 package br.com.controleestoqueapi.users.infrastructure.dto;
-import br.com.controleestoqueapi.users.domain.model.enums.UserRole;
 
+import br.com.controleestoqueapi.users.domain.model.enums.UserRole;
 import java.util.Set;
 
 public record UserResponse(
