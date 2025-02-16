@@ -21,5 +21,4 @@ public record UserRequest(
         String phoneNumber,
         String address,
         Set<UserRole> roles
-
 ) {}

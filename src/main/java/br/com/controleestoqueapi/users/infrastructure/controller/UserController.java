@@ -1,4 +1,4 @@
-package br.com.controleestoqueapi.users.infrastructure.web.controller;
+package br.com.controleestoqueapi.users.infrastructure.controller;
 
 import br.com.controleestoqueapi.users.application.dto.CreateUserRequest;
 import br.com.controleestoqueapi.users.application.dto.UpdateUserRequest;
