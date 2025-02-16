@@ -1,0 +1,33 @@
+name: Testes Maven
+
+on:
+  push: # Executa em *qualquer* push (para qualquer branch)
+    branches-ignore: #Opcional: Ignora a branch main/master
+      - main
+    # Outros gatilhos (opcional):
+    #pull_request: # Executa em pull requests
+    #  branches:
+    #    - main  # Executa apenas em pull requests para a branch main
+  workflow_dispatch:  # Permite executar o workflow manualmente
+
+jobs:
+  test:
+    runs-on: ubuntu-latest  # Usa uma máquina virtual Ubuntu (mais rápido)
+
+    steps:
+      - uses: actions/checkout@v4  # Faz o checkout do seu código
+      - name: Set up JDK  #Configura o JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21' # Use a versão correta do Java!
+          distribution: 'corretto' #Essa é a distribuição que você está usando.
+
+      - name: Build com Maven # Executa o build/teste com Maven
+        run: mvn -B clean verify  # -B = batch mode (sem interação)
+
+      # Opcional: Publicar resultados dos testes (JUnit)
+      #- name: Publish Test Results
+      #  uses: EnricoMi/publish-unit-test-result-action@v2
+      #  if: always() # Executa *mesmo se* os testes falharem
+      #  with:
+      #      files: target/surefire-reports/*.xml  # Caminho dos relatórios de teste (Maven)
