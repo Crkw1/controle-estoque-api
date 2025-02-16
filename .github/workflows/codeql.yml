@@ -2,12 +2,12 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ main, develop ] # Ajuste para as suas branches principais
+    branches: [ master, develop ] 
     paths-ignore:
       - '**.md'
       - 'docs/**'
   pull_request:
-    branches: [ main, develop ] # Ajuste para as suas branches principais
+    branches: [ master, develop ] 
     paths-ignore:
       - '**.md'
       - 'docs/**'
