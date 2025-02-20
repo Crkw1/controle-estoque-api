@@ -1,7 +1,6 @@
 package br.com.controleestoqueapi.common.config;
 
 import br.com.controleestoqueapi.users.infrastructure.security.JwtAuthenticationFilter;
-import br.com.controleestoqueapi.users.infrastructure.security.JwtService;
 import br.com.controleestoqueapi.users.infrastructure.security.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,21 +18,24 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
+    private static final String[] AUTH_WHITELIST = {
+            "/h2-console/**",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/swagger-ui/html"
+    };
+
     private final UserDetailsServiceImpl userDetailsService;
-    private final JwtService jwtService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(UserDetailsServiceImpl userDetailsService, JwtService jwtService, JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(UserDetailsServiceImpl userDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.userDetailsService = userDetailsService;
-        this.jwtService = jwtService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
@@ -43,17 +45,15 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll() // Permite /auth/login
-                        .requestMatchers(HttpMethod.POST, "/users").authenticated()   // Exige autenticação com token JWT válido para POST /users.
-                        .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll() // Permite o console H2
-                        .anyRequest().authenticated() // Todas as outras exigem autenticação
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users").authenticated()
+                        .requestMatchers(AUTH_WHITELIST).permitAll()
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .authenticationProvider(authenticationProvider()); //Adiciona o provedor
+                .authenticationProvider(authenticationProvider());
 
-        //Configuração do console h2
         http.headers(header -> header.frameOptions(frame -> frame.disable()));
-
         return http.build();
     }
 
@@ -72,6 +72,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Usa BCrypt para criptografar senhas (recomendado)
+        return new BCryptPasswordEncoder();
     }
 }
