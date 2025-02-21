@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: postgresql-db
+    restart: always
+    environment:
+      POSTGRES_USER: estoqueuser
+      POSTGRES_PASSWORD: estoquepassword
+      POSTGRES_DB: db_controle_estoque
+      PGDATA: /var/lib/postgresql/data/pgdata
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    ports:
+      - "5434:5432"
+    networks:
+      - estoque-network
+
+networks:
+  estoque-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
