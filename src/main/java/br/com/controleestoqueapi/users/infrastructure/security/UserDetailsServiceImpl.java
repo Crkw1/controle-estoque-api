@@ -1,5 +1,6 @@
 package br.com.controleestoqueapi.users.infrastructure.security;
 
+import br.com.controleestoqueapi.users.domain.exception.UserNotFoundException;
 import br.com.controleestoqueapi.users.domain.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,6 +26,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                         .password(user.getPassword())
                         .roles(user.getRoles().stream().map(Enum::name).toArray(String[]::new))
                         .build())
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com email: " + username));
+                .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado com email: " + username));
     }
 }
